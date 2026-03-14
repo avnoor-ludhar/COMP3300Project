@@ -81,7 +81,7 @@ class Scheduler:
 
 
 # recall fifo (first-in first out): basic heap -> upon task arrival time, non pre-emptive
-    def fifo(self):
+    def fifo(self) -> List[GanttObject]:
         min_heap = [(task.arrival, task.burst, task.pid) for task in self.jobs]
         pid_task_dict = {task.pid: task for task in self.jobs}
         heapq.heapify(min_heap)
