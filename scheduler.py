@@ -1,11 +1,28 @@
 from typing import List
 from task import Task
+from collections import deque
+
+class GanttObject:
+    def __init__(self, pid, start, end = None):
+        self.pid = pid
+        self.start = start
+        self.end = end
+
+    def to_dict(self):
+        return {
+            "pid": self.pid,
+            "start": self.start,
+            "end": self.end
+        }
+
+    def __repr__(self):
+        return f"GanttObject(pid={self.pid}, start={self.start}, end={self.end})"
 
 class Scheduler:
-    def __init__(self, policy: str, jobs: List[Task], quantum=0,):
-        self.policy = policy
-        self.jobs = jobs
-        self.quantum = quantum
+    def __init__(self, policy, jobs, quantum=0):
+        self.policy: str = policy
+        self.jobs: List[Task] = jobs
+        self.quantum: int = quantum
 
     def schedule(self):
         policy = self.policy.upper()
@@ -21,8 +38,46 @@ class Scheduler:
         else:
             raise ValueError(f"Unsupported scheduling policy: {self.policy}")
 
-    def round_robin(self):
-        raise NotImplementedError
+    def round_robin(self) -> List[GanttObject]:
+        inactive_task_queue = deque(sorted(self.jobs, key=lambda task: (task.arrival, task.pid)))
+        active_task_queue = deque()
+        time = 0
+        gantt_timeline: List[GanttObject] = []
+
+        while active_task_queue or inactive_task_queue:
+            if not active_task_queue:
+                active_task_queue.append(inactive_task_queue.popleft())
+
+            task_to_run: Task = active_task_queue.popleft()
+            time_start = max(task_to_run.arrival, time)
+
+            if task_to_run.start_time is None:
+                task_to_run.start_time = time_start
+        
+            time_for_job = min(self.quantum, task_to_run.remaining)
+            time = time_start + time_for_job
+            task_to_run.remaining -= time_for_job
+
+            earlier_arrivals = []
+            while inactive_task_queue and time > inactive_task_queue[0].arrival:
+                earlier_arrivals.append(inactive_task_queue.popleft())
+            
+            boundary_arrivals = []
+            #Logic to break lexicographical ties if we need to readd a task back at the same time we need to add the current task
+            while inactive_task_queue and inactive_task_queue[0].arrival == time:
+                boundary_arrivals.append(inactive_task_queue.popleft())
+
+            if task_to_run.remaining == 0:
+                task_to_run.finish_time = time
+            else:
+                boundary_arrivals.append(task_to_run)
+            
+            active_task_queue.extend(earlier_arrivals)
+            active_task_queue.extend(sorted(boundary_arrivals, key=lambda task: task.pid))
+            gantt_timeline.append(GanttObject(task_to_run.pid, time_start, time))
+        
+        return gantt_timeline
+
 
     def fifo(self):
         raise NotImplementedError
@@ -34,6 +89,6 @@ class Scheduler:
     def priority(self):
         raise NotImplementedError
     
-    #Optional to ensure full marks would probably be fun
+    #OPTIONAL to ensure full marks would probably be fun
     def MLFQ(self):
         pass
