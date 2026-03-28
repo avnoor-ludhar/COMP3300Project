@@ -2,6 +2,7 @@ import json
 import sys
 
 from input_normalize import normalize_input
+from input_validate import validate_input
 from metrics import ScheduleMetrics
 from scheduler import Scheduler, gantt_to_dicts
 from task import Task
@@ -28,7 +29,6 @@ def parse_tasks(json_load) -> Scheduler:
 
 
 def build_output(scheduler: Scheduler, gantt) -> dict:
-    """Top-level JSON object: policy, Gantt timeline, and scheduling metrics."""
     policy = scheduler.policy.strip().upper()
     metrics = ScheduleMetrics(scheduler.jobs).to_dict()
     return {
@@ -46,6 +46,11 @@ if __name__ == "__main__":
     input_file = sys.argv[1]
     with open(input_file) as f:
         json_load = normalize_input(json.load(f))
+    try:
+        validate_input(json_load)
+    except ValueError as err:
+        print(err, file=sys.stderr)
+        sys.exit(1)
 
     scheduler = parse_tasks(json_load)
     gantt = scheduler.schedule()
