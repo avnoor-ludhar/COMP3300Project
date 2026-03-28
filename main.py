@@ -1,6 +1,7 @@
 import json
 import sys
 
+from input_normalize import normalize_input
 from metrics import ScheduleMetrics
 from scheduler import Scheduler, gantt_to_dicts
 from task import Task
@@ -44,7 +45,7 @@ if __name__ == "__main__":
 
     input_file = sys.argv[1]
     with open(input_file) as f:
-        json_load = json.load(f)
+        json_load = normalize_input(json.load(f))
 
     scheduler = parse_tasks(json_load)
     gantt = scheduler.schedule()
