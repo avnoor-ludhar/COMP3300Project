@@ -5,6 +5,16 @@ from scheduler import Scheduler, gantt_to_dicts
 from task import Task
 
 
+def format_schedule_json(data: dict) -> str:
+
+    return json.dumps(
+        data,
+        separators=(",", ":"),
+        sort_keys=False,
+        allow_nan=False,
+    )
+
+
 def parse_tasks(json_load) -> Scheduler:
     jobs = json_load["jobs"]
     parsed_jobs = [
@@ -13,7 +23,6 @@ def parse_tasks(json_load) -> Scheduler:
     quantum = json_load.get("quantum", 0)
     policy = str(json_load["policy"]).strip().upper()
     return Scheduler(policy, parsed_jobs, quantum)
-
 
 
 def build_output(scheduler: Scheduler, gantt) -> dict:
@@ -38,4 +47,4 @@ if __name__ == "__main__":
     gantt = scheduler.schedule()
     out = build_output(scheduler, gantt)
 
-    print(json.dumps(out))
+    print(format_schedule_json(out))
