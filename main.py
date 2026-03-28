@@ -1,6 +1,7 @@
 import json
 import sys
 
+from metrics import ScheduleMetrics
 from scheduler import Scheduler, gantt_to_dicts
 from task import Task
 
@@ -26,11 +27,13 @@ def parse_tasks(json_load) -> Scheduler:
 
 
 def build_output(scheduler: Scheduler, gantt) -> dict:
-    """Top-level result for JSON stdout (Phase 1.2: policy + gantt)."""
+    """Top-level JSON object: policy, Gantt timeline, and scheduling metrics."""
     policy = scheduler.policy.strip().upper()
+    metrics = ScheduleMetrics(scheduler.jobs).to_dict()
     return {
         "policy": policy,
         "gantt": gantt_to_dicts(gantt),
+        "metrics": metrics,
     }
 
 
