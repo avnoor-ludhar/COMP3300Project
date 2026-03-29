@@ -29,3 +29,18 @@ def test_main_extra_args_prints_usage_and_exits_nonzero(main_py, tmp_path):
     assert cp.returncode == 1
     assert "Usage" in cp.stderr
     assert cp.stdout == ""
+
+
+def test_main_missing_input_file_exits_nonzero_with_stderr(main_py, tmp_path):
+    missing = tmp_path / "does_not_exist_input.json"
+    assert not missing.is_file()
+    cp = subprocess.run(
+        [sys.executable, str(main_py), str(missing)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert cp.returncode != 0
+    assert cp.stdout == ""
+    assert cp.stderr
+    assert "FileNotFoundError" in cp.stderr
