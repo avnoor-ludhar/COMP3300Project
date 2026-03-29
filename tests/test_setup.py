@@ -5,7 +5,6 @@ from main import build_output, parse_tasks
 
 
 def test_pytest_setup_and_imports_work():
-    """Phase 4.1 smoke test: pytest discovery and local imports work."""
     data = {
         "policy": "FIFO",
         "jobs": [{"pid": "X", "arrival": 0, "burst": 2, "priority": 1}],

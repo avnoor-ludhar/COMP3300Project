@@ -1,5 +1,3 @@
-"""Phase 4.2 — Golden test for FIFO (non-preemptive, arrival then PID order)."""
-
 import json
 from pathlib import Path
 
@@ -27,7 +25,6 @@ _EXPECTED_FIFO = {
 
 
 def test_fifo_golden_matches_fixture_file():
-    """Full pipeline: normalize → validate → schedule → metrics (same as main)."""
     path = _FIXTURE_DIR / "fifo.json"
     assert path.is_file(), f"missing fixture: {path}"
     raw = json.loads(path.read_text(encoding="utf-8"))
@@ -40,7 +37,6 @@ def test_fifo_golden_matches_fixture_file():
 
 @pytest.mark.parametrize("policy_spacing", ["FIFO", "  fifo  "])
 def test_fifo_policy_normalization(policy_spacing: str):
-    """Policy normalization should not change schedule result."""
     raw = {
         "policy": policy_spacing,
         "jobs": [
