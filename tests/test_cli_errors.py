@@ -44,3 +44,18 @@ def test_main_missing_input_file_exits_nonzero_with_stderr(main_py, tmp_path):
     assert cp.stdout == ""
     assert cp.stderr
     assert "FileNotFoundError" in cp.stderr
+
+
+def test_main_malformed_json_exits_nonzero_with_stderr(main_py, tmp_path):
+    path = tmp_path / "bad.json"
+    path.write_text("{ not valid json", encoding="utf-8")
+    cp = subprocess.run(
+        [sys.executable, str(main_py), str(path)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert cp.returncode != 0
+    assert cp.stdout == ""
+    assert cp.stderr
+    assert "JSONDecodeError" in cp.stderr
