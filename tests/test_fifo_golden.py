@@ -35,6 +35,29 @@ def test_fifo_golden_matches_fixture_file():
     assert out == _EXPECTED_FIFO
 
 
+def test_fifo_equal_arrival_uses_lexicographic_pid_tiebreak():
+    raw = {
+        "policy": "FIFO",
+        "jobs": [
+            {"pid": "B", "arrival": 0, "burst": 3, "priority": 1},
+            {"pid": "A", "arrival": 0, "burst": 2, "priority": 1},
+        ],
+    }
+    data = normalize_input(raw)
+    validate_input(data)
+    scheduler = parse_tasks(data)
+    out = build_output(scheduler, scheduler.schedule())
+    assert [x["pid"] for x in out["gantt"]] == ["A", "B"]
+    assert out["gantt"] == [
+        {"pid": "A", "start": 0, "end": 2},
+        {"pid": "B", "start": 2, "end": 5},
+    ]
+    assert out["metrics"]["turnaround"] == {"A": 2, "B": 5}
+    assert out["metrics"]["waiting"] == {"A": 0, "B": 2}
+    assert out["metrics"]["avg_turnaround"] == 3.5
+    assert out["metrics"]["avg_waiting"] == 1.0
+
+
 @pytest.mark.parametrize("policy_spacing", ["FIFO", "  fifo  "])
 def test_fifo_policy_normalization(policy_spacing: str):
     raw = {
