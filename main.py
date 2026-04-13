@@ -1,13 +1,34 @@
 import json
 import sys
+from typing import List
 
 from metrics import compute_metrics
-from scheduler import Scheduler, gantt_to_dicts
+from scheduler import GanttObject, Scheduler
 from task import Task
 
 
 def format_schedule_json(data: dict) -> str:
-    return json.dumps(data, indent=2, allow_nan=False) + "\n"
+    # Custom JSON formatter for compact array output with readable structure.
+    policy = json.dumps(data["policy"], allow_nan=False)
+    gantt = data["gantt"]
+    m = data["metrics"]
+
+    lines = ["{"]
+    lines.append(f'  "policy": {policy},')
+    lines.append('  "gantt": [')
+    for i, seg in enumerate(gantt):
+        seg_json = json.dumps(seg, allow_nan=False, separators=(", ", ": "))
+        tail = "," if i < len(gantt) - 1 else ""
+        lines.append(f"    {seg_json}{tail}")
+    lines.append("  ],")
+    lines.append('  "metrics": {')
+    lines.append(f'    "turnaround": {json.dumps(m["turnaround"], allow_nan=False, separators=(", ", ": "))},')
+    lines.append(f'    "waiting": {json.dumps(m["waiting"], allow_nan=False, separators=(", ", ": "))},')
+    lines.append(f'    "avg_turnaround": {json.dumps(m["avg_turnaround"], allow_nan=False)},')
+    lines.append(f'    "avg_waiting": {json.dumps(m["avg_waiting"], allow_nan=False)}')
+    lines.append("  }")
+    lines.append("}")
+    return "\n".join(lines) + "\n"
 
 
 def parse_tasks(json_load) -> Scheduler:
@@ -21,12 +42,13 @@ def parse_tasks(json_load) -> Scheduler:
     return Scheduler(policy, parsed_jobs, quantum)
 
 
-def build_output(scheduler: Scheduler, gantt) -> dict:
+def build_output(scheduler: Scheduler, gantt: List[GanttObject]) -> dict:
     # Construct final output dict with policy, Gantt chart, and computed metrics.
     policy = scheduler.policy.strip().upper()
+    gantt_dicts = [seg.to_dict() for seg in gantt]  # convert GanttObjects to dicts
     return {
         "policy": policy,
-        "gantt": gantt_to_dicts(gantt),
+        "gantt": gantt_dicts,
         "metrics": compute_metrics(scheduler.jobs),
     }
 

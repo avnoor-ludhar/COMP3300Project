@@ -22,11 +22,6 @@ class GanttObject:
         return f"GanttObject(pid={self.pid}, start={self.start}, end={self.end})"
 
 
-def gantt_to_dicts(gantt: List[GanttObject]) -> List[dict]:
-    # Convert Gantt objects to serializable dicts for JSON output.
-    return [segment.to_dict() for segment in gantt]
-
-
 class Scheduler:
     """Orchestrates CPU scheduling across four different policies.
 
