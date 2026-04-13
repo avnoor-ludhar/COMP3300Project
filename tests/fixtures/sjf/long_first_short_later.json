@@ -1,0 +1,9 @@
+{
+  "policy": "SJF",
+  "quantum": 0,
+  "jobs": [
+    { "pid": "A", "arrival": 0, "burst": 8, "priority": 1 },
+    { "pid": "B", "arrival": 0, "burst": 4, "priority": 2 },
+    { "pid": "C", "arrival": 1, "burst": 1, "priority": 3 }
+  ]
+}

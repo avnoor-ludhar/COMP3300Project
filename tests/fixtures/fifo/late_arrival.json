@@ -1,0 +1,8 @@
+{
+  "policy": "FIFO",
+  "quantum": 0,
+  "jobs": [
+    { "pid": "A", "arrival": 0, "burst": 4, "priority": 1 },
+    { "pid": "B", "arrival": 10, "burst": 2, "priority": 2 }
+  ]
+}

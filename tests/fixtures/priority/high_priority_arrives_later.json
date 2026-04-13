@@ -1,0 +1,8 @@
+{
+  "policy": "PRIORITY",
+  "quantum": 0,
+  "jobs": [
+    { "pid": "A", "arrival": 0, "burst": 6, "priority": 3 },
+    { "pid": "B", "arrival": 2, "burst": 2, "priority": 1 }
+  ]
+}
