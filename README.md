@@ -70,13 +70,13 @@ Execute the full test suite:
 python3 -m pytest tests/ -v
 ```
 
-Runs 32 tests (8 per algorithm).
+Runs 34 tests (8 per algorithm) + 2 edge case tests for empty job lists.
 
 ### Test Structure
 
 **Test Files:** `test_fifo.py`, `test_sjf.py`, `test_rr.py`, `test_priority.py`
 
-**Fixtures:** `/tests/fixtures/{fifo,sjf,rr,priority}/` - 8 JSON test cases per algorithm
+**Fixtures:** `/tests/fixtures/{fifo,sjf,rr,priority}/` - 8-9 JSON test cases per algorithm
 
 ### Coverage
 
