@@ -175,3 +175,17 @@ def test_rr_three_tasks_complex():
             "avg_waiting": 6.33,
         },
     })
+
+
+# Test 9: Empty job list returns empty output
+def test_rr_empty_jobs():
+    _load_and_test("empty_jobs", {
+        "policy": "RR",
+        "gantt": [],
+        "metrics": {
+            "turnaround": {},
+            "waiting": {},
+            "avg_turnaround": 0.0,
+            "avg_waiting": 0.0,
+        },
+    })

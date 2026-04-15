@@ -34,11 +34,22 @@ def format_schedule_json(data: dict) -> str:
 def parse_tasks(json_load) -> Scheduler:
     # Parse JSON input into Scheduler object. Quantum defaults to 0 for non-RR policies.
     jobs = json_load["jobs"]
+    for j in jobs:
+        if j["arrival"] < 0:
+            raise ValueError(f"Task {j['pid']!r}: arrival time cannot be negative")
+        if j["burst"] <= 0:
+            raise ValueError(f"Task {j['pid']!r}: burst time must be positive")
+
     parsed_jobs = [
         Task(j["pid"], j["arrival"], j["burst"], j["priority"]) for j in jobs
     ]
     quantum = json_load.get("quantum", 0)  # only required for RR
     policy = str(json_load["policy"]).strip().upper()
+
+    # Validate quantum for Round Robin
+    if policy == "RR" and quantum <= 0:
+        raise ValueError("Round Robin requires quantum > 0")
+
     return Scheduler(policy, parsed_jobs, quantum)
 
 

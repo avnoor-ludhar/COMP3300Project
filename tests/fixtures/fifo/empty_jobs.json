@@ -1,0 +1,5 @@
+{
+  "policy": "FIFO",
+  "quantum": 0,
+  "jobs": []
+}

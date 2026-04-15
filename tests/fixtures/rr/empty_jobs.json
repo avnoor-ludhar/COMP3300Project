@@ -1,0 +1,5 @@
+{
+  "policy": "RR",
+  "quantum": 2,
+  "jobs": []
+}

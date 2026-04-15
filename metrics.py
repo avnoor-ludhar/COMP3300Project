@@ -7,8 +7,14 @@ from task import Task
 
 def compute_metrics(tasks: List[Task]) -> dict:
     # Calculate turnaround and waiting times for each task plus averages.
+    # Return empty metrics for empty job list.
     if not tasks:
-        raise ValueError("Cannot compute metrics for an empty job list")
+        return {
+            "turnaround": {},
+            "waiting": {},
+            "avg_turnaround": 0.0,
+            "avg_waiting": 0.0,
+        }
     for task in tasks:
         if task.finish_time is None:
             raise ValueError(

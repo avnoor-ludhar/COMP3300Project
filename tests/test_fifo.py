@@ -154,3 +154,17 @@ def test_fifo_late_arrival():
             "avg_waiting": 0.0,
         },
     })
+
+
+# Test 9: Empty job list returns empty output
+def test_fifo_empty_jobs():
+    _load_and_test("empty_jobs", {
+        "policy": "FIFO",
+        "gantt": [],
+        "metrics": {
+            "turnaround": {},
+            "waiting": {},
+            "avg_turnaround": 0.0,
+            "avg_waiting": 0.0,
+        },
+    })
